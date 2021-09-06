@@ -1,18 +1,36 @@
+from django.http import response
 from authapp.serializers import UserSerializer
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from django.contrib.auth.models import User
 from rest_framework.authtoken.models import Token
+from django.views.decorators.csrf import csrf_exempt
+from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 class RegisterUser(APIView):
     def post(self, request):
         serializer = UserSerializer(data = request.data)
 
-        if not serializer.is_valid():
-            return Response({'message':'Credentials were not valid', 'status':403})      
+        serializer.is_valid(raise_exception = True)     
         serializer.save()
         user = User.objects.get(username=serializer.data['username'])
-        token = Token.objects.create(user=user)
+        # print(user.id)
+        # token = Token.objects.create(user=user)
 
-        return Response({'token': str(token), 'status': 200})
+        return Response({'status': 200})
+# from django.contrib.auth import authenticate
+# # @csrf_exempt
+# class LoginView(APIView):
+#     def post(self, request):
+#         username = request.data['username']
+#         password = request.data['password']
+#         user = User.objects.get(username=username)
+#         token = Token.objects.create(user = user)
+#         return Response({'message': 'loggedin','status':200, 'token':token})
+
+
+class Mesg(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        return Response({"message":"You are logged in"})
