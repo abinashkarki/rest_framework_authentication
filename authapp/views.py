@@ -1,5 +1,5 @@
 from django.http import response
-from authapp.serializers import UserSerializer
+from authapp.serializers import RegisterSerialzer
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -10,15 +10,16 @@ from rest_framework.permissions import IsAuthenticated
 # Create your views here.
 class RegisterUser(APIView):
     def post(self, request):
-        serializer = UserSerializer(data = request.data)
+        serializer = RegisterSerialzer(data = request.data)
 
         serializer.is_valid(raise_exception = True)     
         serializer.save()
-        user = User.objects.get(username=serializer.data['username'])
+        # user = User.objects.get(username=serializer.data['username'])
         # print(user.id)
         # token = Token.objects.create(user=user)
 
-        return Response({'status': 200})
+        return Response(serializer.data)
+
 # from django.contrib.auth import authenticate
 # # @csrf_exempt
 # class LoginView(APIView):
@@ -33,4 +34,7 @@ class RegisterUser(APIView):
 class Mesg(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        return Response({"message":"You are logged in"})
+        content={
+            'message':'you are logged in'
+        }
+        return Response(content)
