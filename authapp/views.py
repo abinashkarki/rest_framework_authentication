@@ -20,7 +20,7 @@ class RegisterUser(APIView):
 
         return Response(serializer.data)
 
-# from django.contrib.auth import authenticate
+
 # # @csrf_exempt
 # class LoginView(APIView):
 #     def post(self, request):
