@@ -13,7 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
-from authapp.views import RegisterUser, Mesg
+from authapp.views import RegisterUser, Mesg, VerifyEmail
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import (
@@ -31,4 +31,5 @@ urlpatterns = [
     path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api_auth/', include('rest_framework.urls')), 
     path('log/', Mesg.as_view()),
+    path('email-verify/', VerifyEmail.as_view(), name = 'email-verify')
 ]
