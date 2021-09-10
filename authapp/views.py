@@ -5,7 +5,7 @@ from authapp.serializers import RegisterSerialzer
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
-from django.contrib.auth.models import User
+from .models import User
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import IsAuthenticated
@@ -18,9 +18,10 @@ from django.conf import settings
 from django.core import exceptions
 # Create your views here.
 class RegisterUser(APIView):
+    serialzer_class = RegisterSerialzer
     def post(self, request):
         user = request.data
-        serializer = RegisterSerialzer(data = user)
+        serializer = self.serialzer_class(data = user)
         serializer.is_valid(raise_exception = True)     
         serializer.save()
         user_data = serializer.data
@@ -49,8 +50,8 @@ class VerifyEmail(APIView):
         try:
             payload = jwt.decode(token, settings.SECRET_KEY)
             user = User.objects.get(id=payload['user_id'])
+            user.is_verified = True
             # if not user.is_verified:
-            user.is_verified=True
             user.save()
             return Response({'email':'successfuly activated'}, status=status.HTTP_200_OK)
         # except jwt.ExpiredSignatureError as identifier:
