@@ -1,7 +1,7 @@
 # from os import settings
 from .utils import Util
 from django.http import response
-from authapp.serializers import RegisterSerialzer
+from authapp.serializers import LoginSerializer, RegisterSerialzer
 from django.shortcuts import render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -51,6 +51,8 @@ class VerifyEmail(APIView):
             payload = jwt.decode(token, settings.SECRET_KEY)
             user = User.objects.get(id=payload['user_id'])
             user.is_verified = True
+            # user.is_authenticated = True
+            user.is_active = True
             # if not user.is_verified:
             user.save()
             return Response({'email':'successfuly activated'}, status=status.HTTP_200_OK)
@@ -84,6 +86,13 @@ class VerifyEmail(APIView):
 #         user = User.objects.get(username=username)
 #         token = Token.objects.create(user = user)
 #         return Response({'message': 'loggedin','status':200, 'token':token})
+
+class LoginAPIView(APIView):
+    serializer_class = LoginSerializer
+    def post(self, request):
+        serializer = self.serializer_class(data=request.data)
+        serializer.is_valid(raise_exception = True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class Mesg(APIView):
