@@ -5,6 +5,8 @@ from rest_framework.validators import UniqueValidator
 from django.contrib.auth.hashers import make_password
 from rest_framework.exceptions import AuthenticationFailed
 from django.contrib import auth
+from rest_framework.response import Response
+from rest_framework import status
 #this does not hash the password
 # class RegisterSerializer(serializers.ModelSerializer):
 #     email = serializers.EmailField(
@@ -59,13 +61,14 @@ class LoginSerializer(serializers.ModelSerializer):
 
         user = auth.authenticate(email=email, password=password)
         if user is None:
-            raise AuthenticationFailed('No such user')
+            return Response({'msg':'No such user'}, status=status.HTTP_401_UNAUTHORIZED)
+            # raise AuthenticationFailed({'status':False,'message': ' username is worng'}, status=status.HTTP_401_UNAUTHORIZED)
         if not user.is_active:
-            raise AuthenticationFailed('Account is disabled')
+            raise AuthenticationFailed({'msg':'Account is disabled'})
         if not user.is_verified:
-            raise AuthenticationFailed('Email is not verified')
+            raise AuthenticationFailed({'msg': 'Email is not verified'})
         if not user:
-            raise AuthenticationFailed('Invalid credentials, try again')
+            return Response({'msg':'Invalid credentials, try again'}, status=status.HTTP_401_Unauthorized)
 
         return{
             'email':user.email,
