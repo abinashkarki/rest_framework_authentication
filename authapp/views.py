@@ -27,23 +27,17 @@ class RegisterUser(APIView):
         serializer.is_valid(raise_exception = True)     
         serializer.save()
         user_data = serializer.data
-        # user = User.objects.get(username=serializer.data['username'])
-        # print(user.id)
-        # token = Token.objects.create(user=user)
         user = User.objects.get(email = user_data['email'])
         token = RefreshToken.for_user(user).access_token
         current_site = get_current_site(request).domain
         relativeLink = reverse('email-verify')
-        
         absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
         email_body = 'Hi '+ user.username + 'user the link below to verify your email \n' + absurl
-
         data = {'email_body':email_body,'to_email':user.email,
                 'email_subject':'Verify your email'}
         Util.send_email(data)
-
-
         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class ResendVerifyEmail(APIView):
     serializer_class = RegisterSerialzer
@@ -54,8 +48,7 @@ class ResendVerifyEmail(APIView):
         print(email)
         try:
             user = User.objects.get(email=email)
-       
-            print('hello')
+            # print('hello')
             if user.is_verified:
                 return Response({'msg':'User is already verified'})
             print (user.username)
@@ -72,12 +65,6 @@ class ResendVerifyEmail(APIView):
             return Response({'msg':'The verification email has been sent'}, status=status.HTTP_201_CREATED)
         except User.DoesNotExist:
             return Response({'msg':'No such user, register first'})
-
-        
-
-
-
-
 
 
 class VerifyEmail(APIView):
@@ -101,30 +88,7 @@ class VerifyEmail(APIView):
         # except jwt.exceptions.DecodeError as identifier:
         except jwt.exceptions.DecodeError:
             return Response({'error':'invalid token'}, status=status.HTTP_400_BAD_REQUEST)
-        # except jwt.ExpiredSignatureError:
-        #     msg = 'Signature has expired.'
-            # raise exceptions.AuthenticationFailed(msg)
-        # except jwt.DecodeError:
-        #     msg = 'Error decoding signature.'
-        #     # raise exceptions.AuthenticationFailed(msg)
-        # except jwt.InvalidTokenError:
-        #     raise exceptions.AuthenticationFailed()
 
-
-
-
-
- 
-
-
-# # @csrf_exempt
-# class LoginView(APIView):
-#     def post(self, request):
-#         username = request.data['username']
-#         password = request.data['password']
-#         user = User.objects.get(username=username)
-#         token = Token.objects.create(user = user)
-#         return Response({'message': 'loggedin','status':200, 'token':token})
 
 class LoginAPIView(APIView):
     serializer_class = LoginSerializer
@@ -132,10 +96,9 @@ class LoginAPIView(APIView):
         serializer = self.serializer_class(data=request.data)
         serializer.is_valid(raise_exception = True)
         return Response(serializer.data, status=status.HTTP_200_OK)
-        # return render(request, 'Welcome.html', {'data':serializer.data})
+
 
 class UserDetailView(APIView):
-    
     permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
@@ -145,12 +108,6 @@ class UserDetailView(APIView):
             'email':user.email
         })
 
-        # content = {
-        #     # 'id':User.id,
-        #     'username':user.username,
-        #     'email':user.email
-        # }
-        # return Response(content)
 
 class Mesg(APIView):
     permission_classes = [IsAuthenticated]
@@ -159,6 +116,7 @@ class Mesg(APIView):
             'message':'you are logged in'
         }
         return Response(content)
+
 
 class LogoutAPIView(APIView):
     serializer_class = LogoutSerializer
@@ -169,12 +127,6 @@ class LogoutAPIView(APIView):
         serializer.is_valid(raise_exception = True)
         try:
             serializer.save()
-            return Response({'msg':'token has been blacklisted'})
+            return Response({'msg':'User Successfully logged out'})
         except TokenError:
             return Response({'msg':'token is already blacklisted or is not valid'})
-
-
-
-
-
-
