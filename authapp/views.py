@@ -10,7 +10,7 @@ from .models import User
 from rest_framework.authtoken.models import Token
 from django.views.decorators.csrf import csrf_exempt
 from rest_framework.permissions import IsAuthenticated
-from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework_simplejwt.tokens import RefreshToken, TokenError
 from django.contrib.sites.shortcuts import get_current_site
 from django.urls import reverse
 from rest_framework import status
@@ -160,9 +160,6 @@ class Mesg(APIView):
         }
         return Response(content)
 
-
-
-
 class LogoutAPIView(APIView):
     serializer_class = LogoutSerializer
     permission_classes = [IsAuthenticated]
@@ -170,30 +167,14 @@ class LogoutAPIView(APIView):
     def post(self, request):
         serializer = self.serializer_class(data = request.data)
         serializer.is_valid(raise_exception = True)
-        serializer.save()
-
-        return Response(status = status.HTTP_204_NO_CONTENT)
-
-# class LogoutAPIView(APIView):
-#     permission_classes = (IsAuthenticated,)
-
-#     def post(self, request):
-#         try:
-#             refresh_token = request.data["refresh_token"]
-#             token = RefreshToken(refresh_token)
-#             token.blacklist()
-
-#             return Response(status=status.HTTP_205_RESET_CONTENT)
-#         except Exception as e:
-#             return Response(status=status.HTTP_400_BAD_REQUEST)
+        try:
+            serializer.save()
+            return Response({'msg':'token has been blacklisted'})
+        except TokenError:
+            return Response({'msg':'token is already blacklisted or is not valid'})
 
 
-# class LogoutAPIView(APIView):
-#     serializer_class = LogoutSerializer
-#     permission_classes = (permissions.IsAuthenticated, )
 
-#     def post(self, request, *args):
-#         sz = self.serializer_class(data=request.data)
-#         sz.is_valid(raise_exception=True)
-#         sz.save()
-#         return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+
