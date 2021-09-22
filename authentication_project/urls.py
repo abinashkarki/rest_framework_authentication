@@ -20,6 +20,7 @@ from rest_framework_simplejwt.views import (
     TokenObtainPairView,
     TokenRefreshView,
 )
+from authapp import views
 
 
 urlpatterns = [
@@ -34,5 +35,7 @@ urlpatterns = [
     # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api_auth/', include('rest_framework.urls')), 
     path('log/', Mesg.as_view()),
-    path('email-verify/', VerifyEmail.as_view(), name = 'email-verify')
+    path('email-verify/', VerifyEmail.as_view(), name = 'email-verify'),
+    path('', include('social_django.urls', namespace='social')),
+    path('testPath/', views.testSocial, name='testSocial'),
 ]

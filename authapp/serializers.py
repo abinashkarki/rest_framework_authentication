@@ -44,6 +44,14 @@ class ResendVerificationSerializer(serializers.ModelSerializer):
     class Meta:
         # model = User
         fields = ['email']
+        
+
+class EmailVerificationSerializer(serializers.ModelSerializer):
+    token = serializers.CharField(max_length=555)
+
+    class Meta:
+        model = User
+        fields = ['token']
 
 
 class LoginSerializer(serializers.ModelSerializer):
@@ -66,16 +74,14 @@ class LoginSerializer(serializers.ModelSerializer):
         user = auth.authenticate(email=email, password=password)
         print (user)
         if not user:
-            raise AuthenticationFailed({'msg': 'No such user'}, code=status.HTTP_401_UNAUTHORIZED)
+            raise AuthenticationFailed({'msg': 'No such user','status':'status.HTTP_401_UNAUTHORIZED'}, code=status.HTTP_401_UNAUTHORIZED)
         if user is None:
-            raise AuthenticationFailed({'message': ' Your Email or Password is wrong'}, code=status.HTTP_401_UNAUTHORIZED)
+            raise AuthenticationFailed({'message': ' Your Email or Password is wrong', 'status':'status.HTTP_401_UNAUTHORIZED'}, code=status.HTTP_401_UNAUTHORIZED)
             # raise AuthenticationFailed({'message': ' username is wrong'})
         if not user.is_active:
-            raise AuthenticationFailed({'msg':'Account is disabled'},code=status.HTTP_403_FORBIDDEN)
+            raise AuthenticationFailed({'msg':'Account is disabled', 'status':'status.HTTP_403_FORBIDDEN'},code=status.HTTP_403_FORBIDDEN)
         if not user.is_verified:
-            raise AuthenticationFailed({'msg': 'Email is not verified'}, code=status.HTTP_401_UNAUTHORIZED)
-        
-            return Response({'msg':'Invalid credentials, try again'}, status=status.HTTP_401_Unauthorized)
+            raise AuthenticationFailed({'msg': 'Email is not verified', 'status':'status.HTTP_401_UNAUTHORIZED'}, code=status.HTTP_401_UNAUTHORIZED)
 
         return{
             'email':user.email,
