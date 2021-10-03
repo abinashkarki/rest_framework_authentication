@@ -23,6 +23,7 @@ from rest_framework_simplejwt.views import (
 from authapp import views
 from django.conf.urls.static import static
 from django.conf import settings
+from django.views.static import serve
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -39,6 +40,7 @@ urlpatterns = [
     path('email-verify/', VerifyEmail.as_view(), name = 'email-verify'),
     path('', include('social_django.urls', namespace='social')),
     path('socialAuth/', views.testSocial, name='testSocial'),
+    path('static/<path:path>/', serve, {'document_root': settings.STATIC_ROOT, }),
 ]
 
 
