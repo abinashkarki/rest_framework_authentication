@@ -28,7 +28,7 @@ SECRET_KEY = 'nd=n)v2!68u$n$eys#3-qa(+xqqz0#3n9pn(1ejli8h7xcdr=+'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = False
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'drf-authentication.herokuapp.com']
 
 AUTH_USER_MODEL="authapp.User"
 
