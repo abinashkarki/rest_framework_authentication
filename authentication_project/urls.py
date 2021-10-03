@@ -41,6 +41,7 @@ urlpatterns = [
     path('', include('social_django.urls', namespace='social')),
     path('socialAuth/', views.testSocial, name='testSocial'),
     path('static/<path:path>/', serve, {'document_root': settings.STATIC_ROOT, }),
+    path('', views.testSocial),
 ]
 
 
