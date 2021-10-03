@@ -26,7 +26,7 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SECRET_KEY = 'nd=n)v2!68u$n$eys#3-qa(+xqqz0#3n9pn(1ejli8h7xcdr=+'
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = False
 
 ALLOWED_HOSTS = []
 
@@ -149,10 +149,10 @@ EMAIL_HOST_USER = env('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = env('EMAIL_HOST_PASSWORD')
 
 
-SOCIAL_AUTH_FACEBOOK_KEY = '4673788962634080'
-SOCIAL_AUTH_FACEBOOK_SECRET = 'a966b5ff25249536bb502b0a875c31d8'
-SOCIAL_AUTH_GOOGLE_KEY = '876235894241-aoq0n78evoe50dasjg1vgv9ptoabuu2l.apps.googleusercontent.com'
-SOCIAL_AUTH_GOOGLE_SECRET = 'B0Quj1KWH1FKZBbPfmws1XvE'
+SOCIAL_AUTH_FACEBOOK_KEY='290714769173805'
+SOCIAL_AUTH_FACEBOOK_SECRET='52a9385d71d4c39bd35e54eb54d8e63b'
+SOCIAL_AUTH_GOOGLE_KEY='12136994087-mudbquscl61lprt614mauglg34n0jt5d.apps.googleusercontent.com'
+SOCIAL_AUTH_GOOGLE_SECRET='4qj-iywDgbjRTTEShc-OCLWU'
 
 from datetime import timedelta
 SIMPLE_JWT = {

@@ -21,7 +21,8 @@ from rest_framework_simplejwt.views import (
     TokenRefreshView,
 )
 from authapp import views
-
+from django.conf.urls.static import static
+from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -37,5 +38,9 @@ urlpatterns = [
     path('log/', Mesg.as_view()),
     path('email-verify/', VerifyEmail.as_view(), name = 'email-verify'),
     path('', include('social_django.urls', namespace='social')),
-    path('testPath/', views.testSocial, name='testSocial'),
+    path('socialAuth/', views.testSocial, name='testSocial'),
 ]
+
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
