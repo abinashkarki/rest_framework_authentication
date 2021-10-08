@@ -13,6 +13,7 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from django.contrib.auth import logout
 from authapp.views import LoginAPIView, LogoutAPIView, RegisterUser, Mesg, ResendVerifyEmail, UserDetailView, VerifyEmail
 from django.contrib import admin
 from django.urls import path, include
@@ -32,18 +33,13 @@ urlpatterns = [
     path('ResendRegisterLink/', ResendVerifyEmail.as_view()),
     path('login/', LoginAPIView.as_view(), name='login'),
     path('logout/', LogoutAPIView.as_view(), name='logout'),
-    path('UserDetail/', UserDetailView.as_view(), name='my-detai'),
+    path('UserDetail/', UserDetailView.as_view(), name='my-detail'),
     # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
     # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
     path('api_auth/', include('rest_framework.urls')), 
     path('log/', Mesg.as_view()),
     path('email-verify/', VerifyEmail.as_view(), name = 'email-verify'),
-    path('', include('social_django.urls', namespace='social')),
-    path('socialAuth/', views.testSocial, name='testSocial'),
-    path('static/<path:path>/', serve, {'document_root': settings.STATIC_ROOT, }),
-    path('', views.testSocial),
+    path("all/", views.all1,name="all"),
+    path("", include('social_django.urls', namespace='social')),
+    # path("socialLogout", views.logout, name="social-logout")
 ]
-
-
-if settings.DEBUG:
-    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

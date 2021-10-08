@@ -5,20 +5,24 @@ from django.contrib.auth.models import (
 from rest_framework_simplejwt.tokens import RefreshToken
 # Create your models here.
 class UserManager(BaseUserManager):
-    def create_user(self, username, email, password):
+    def _create_user(self, username, email, password, **extra_fields):
         if username is None:
             raise TypeError("User should be provide username")
         if email is None:
             raise TypeError("User should be provide email")
-        if password is None:
-            raise TypeError("User should be provide password")
+        # if password is None:
+        #     raise TypeError("User should be provide password")
 
         user = self.model(username=username, email=self.normalize_email(email))
-        user.set_password(password)
-        user.save()
+        if password:
+            user.set_password(password)
+        user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password):
+    def create_user(self, username, email, password=None, **extra_fields):
+        return self._create_user(email, username, password, **extra_fields)
+
+    def create_superuser(self, username, email, password=None, **extra_fields):
         user = self.create_user(username, email, password)
         user.is_superuser = True
         user.is_staff = True

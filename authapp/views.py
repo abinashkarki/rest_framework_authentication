@@ -193,7 +193,7 @@ class LogoutAPIView(APIView):
     serializer_class = LogoutSerializer
     permission_classes = [IsAuthenticated]
 
-    def post(self, request):
+    def post(self, request): 
         serializer = self.serializer_class(data = request.data)
         serializer.is_valid(raise_exception = True)
         try:
@@ -202,5 +202,16 @@ class LogoutAPIView(APIView):
         except TokenError:
             return Response({'msg':'token is already blacklisted or is not valid','status':'status.HTTP_400_BAD_REQUEST'})
 
-def testSocial(request):
-    return render(request, 'Welcome.html')
+def all1(request):
+    return render (request, "welcome.html")
+
+
+# from django.contrib.auth import logout
+# from django.shortcuts import HttpResponseRedirect
+
+
+# def logout(request):
+#     if not User:
+#         return HttpResponseRedirect('all/')
+#     logout(request)
+#     return HttpResponseRedirect('/all/')
