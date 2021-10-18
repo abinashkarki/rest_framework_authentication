@@ -30,6 +30,9 @@ class UserManager(BaseUserManager):
         user.save()
         return user
 
+AUTH_PROVIDERS = {'facebook':'facebook', 'google':'google',
+                    'twitter':'twitter', 'email':'email'
+}
 
 class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=255, db_index=True)
@@ -40,6 +43,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_staff = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    auth_provider  = models.CharField(max_length=225, blank=False, null=False, default=AUTH_PROVIDERS.get('email'))
 
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']

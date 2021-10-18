@@ -71,7 +71,14 @@ class LoginSerializer(serializers.ModelSerializer):
         email = attrs.get('email')
         password = attrs.get('password')
 
+        filtered_user_by_email = User.objects.filter(email=email)
+
         user = auth.authenticate(email=email, password=password)
+
+        if filtered_user_by_email[0].auth_provider != 'email':
+            raise AuthenticationFailed(
+                detail="Please continue your login using "+filtered_user_by_email[0].auth_provider
+            )
         print (user)
         if not user:
             raise AuthenticationFailed({'msg': 'No such user','status':'status.HTTP_401_UNAUTHORIZED'}, code=status.HTTP_401_UNAUTHORIZED)

@@ -30,6 +30,7 @@ class RegisterUser(APIView):
         user = User.objects.get(email = user_data['email'])
         token = RefreshToken.for_user(user).access_token
         current_site = get_current_site(request).domain
+        print(current_site)
         relativeLink = reverse('email-verify')
         absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
         email_body = 'Hi '+ user.username + 'user the link below to verify your email \n' + absurl
@@ -37,26 +38,7 @@ class RegisterUser(APIView):
                 'email_subject':'Verify your email'}
         Util.send_email(data)
         return Response(serializer.data, status=status.HTTP_201_CREATED)
-# class RegisterUser(APIView):
-#     serialzer_class = RegisterSerialzer
-#     def post(self, request):
-#         user = request.data
-#         serializer = self.serialzer_class(data = user)
-#         serializer.is_valid(raise_exception = True)     
-#         serializer.save()
-#         user_data = serializer.data
-#         user = User.objects.get(email = user_data['email'])
-#         token = RefreshToken.for_user(user).access_token
-#         # print(token)
-#         current_site = get_current_site(request).domain
-#         relativeLink = reverse('email-verify')
-#         absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
-#         email_body = 'Hi '+user.username + \
-#             ' Use the link below to verify your email \n' + absurl
-#         data = {'email_body': email_body, 'to_email': user.email,
-#                 'email_subject': 'Verify your email'}
-#         Util.send_email(data)
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
+
 
 class ResendVerifyEmail(APIView):
     serializer_class = RegisterSerialzer
@@ -64,15 +46,13 @@ class ResendVerifyEmail(APIView):
         data = request.data
         # email = data.get('email')
         email = data['email']
-        print(email)
         try:
             user = User.objects.get(email=email)
-            # print('hello')
             if user.is_verified:
                 return Response({'msg':'User is already verified'})
-            print (user.username)
             token = RefreshToken.for_user(user).access_token
-            current_site= get_current_site(request).domain
+            current_site= get_current_site(self.request).domain
+            print(get_current_site(self.request))
             relativeLink = reverse('email-verify')
             
             absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
@@ -84,33 +64,6 @@ class ResendVerifyEmail(APIView):
             return Response({'msg':'The verification email has been sent'}, status=status.HTTP_201_CREATED)
         except User.DoesNotExist:
             return Response({'msg':'No such user, register first'})
-
-# class ResendVerifyEmail(APIView):
-#     serializer_class = RegisterSerialzer
-#     def post(self, request):
-#         data = request.data
-#         # email = data.get('email')
-#         email = data['email']
-#         print(email)
-#         try:
-#             user = User.objects.get(email=email)
-#             # print('hello')
-#             if user.is_verified:
-#                 return Response({'msg':'User is already verified','status':'status.HTTP_400_BAD_REQUEST'})
-#             print (user.username)
-#             token = RefreshToken.for_user(user).access_token
-#             current_site= get_current_site(request).domain
-#             relativeLink = reverse('email-verify')
-            
-#             absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
-#             email_body = 'Hi '+ user.username + ' this is the resent link to verify your email \n' + absurl
-
-#             data = {'email_body':email_body,'to_email':user.email,
-#                     'email_subject':'Verify your email'}
-#             Util.send_email(data)
-#             return Response({'msg':'The verification email has been sent','status':'status.HTTP_201_CREATED'}, status=status.HTTP_201_CREATED)
-#         except User.DoesNotExist:
-#             return Response({'msg':'No such user, register first','status':'status.HTTP_400_BAD_REQUEST'})
 
 
 class VerifyEmail(APIView):
@@ -138,27 +91,6 @@ class VerifyEmail(APIView):
             return Response({'error':'Activation Expired','status':'status.HTTP_400_BAD_REQUEST'}, status=status.HTTP_400_BAD_REQUEST)
         except jwt.exceptions.DecodeError:
             return Response({'error':'invalid token','status':'status.HTTP_400_BAD_REQUEST'}, status=status.HTTP_400_BAD_REQUEST)
-# class VerifyEmail(APIView):
-#     def get(self, request):
-#         token = request.GET.get('token')
-#         try:
-#             payload = jwt.decode(token, settings.SECRET_KEY)
-#             user = User.objects.filter(id=payload['user_id']).first()
-#             if user.is_verified:
-#                 return Response({'msg':'User already verified!'}, status=status.HTTP_400_BAD_REQUEST)
-#             else:
-#                 user.is_verified = True
-#                 # user.is_authenticated = True
-#                 user.is_active = True
-#                 # if not user.is_verified:
-#                 user.save()
-#                 return Response({'email':'successfuly activated'}, status=status.HTTP_200_OK)
-#         # except jwt.ExpiredSignatureError as identifier:
-#         except jwt.ExpiredSignatureError:
-#             return Response({'error':'Activation Expired expired'}, status=status.HTTP_400_BAD_REQUEST)
-#         # except jwt.exceptions.DecodeError as identifier:
-#         except jwt.exceptions.DecodeError:
-#             return Response({'error':'invalid token'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 class LoginAPIView(APIView):
@@ -205,6 +137,8 @@ class LogoutAPIView(APIView):
 def all1(request):
     return render (request, "welcome.html")
 
+def googlepage(request):
+    return render(request, 'login with google.html')
 
 # from django.contrib.auth import logout
 # from django.shortcuts import HttpResponseRedirect

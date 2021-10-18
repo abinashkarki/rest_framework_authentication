@@ -14,7 +14,7 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib.auth import logout
-from authapp.views import LoginAPIView, LogoutAPIView, RegisterUser, Mesg, ResendVerifyEmail, UserDetailView, VerifyEmail
+from authapp.views import LoginAPIView, LogoutAPIView, RegisterUser, Mesg, ResendVerifyEmail, UserDetailView, VerifyEmail, googlepage
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import (
@@ -35,11 +35,12 @@ urlpatterns = [
     path('logout/', LogoutAPIView.as_view(), name='logout'),
     path('UserDetail/', UserDetailView.as_view(), name='my-detail'),
     # path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
-    # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
-    path('api_auth/', include('rest_framework.urls')), 
+    # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
     path('log/', Mesg.as_view()),
     path('email-verify/', VerifyEmail.as_view(), name = 'email-verify'),
     path("all/", views.all1,name="all"),
+    path("socialLogin/", views.googlepage),
     path("", include('social_django.urls', namespace='social')),
     # path("socialLogout", views.logout, name="social-logout")
+    path('social_auth/', include('socialauth.urls')),
 ]
