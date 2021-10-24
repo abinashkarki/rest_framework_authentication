@@ -13,8 +13,9 @@ Including another URLconf
     1. Import the include() function: from django.urls import include, path
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
+from os import name
 from django.contrib.auth import logout
-from authapp.views import LoginAPIView, LogoutAPIView, RegisterUser, Mesg, ResendVerifyEmail, UserDetailView, VerifyEmail, googlepage
+from authapp.views import ChangePassword, LoginAPIView, LogoutAPIView, RegisterUser, Mesg, ResendVerifyEmail, SetNewPasswordAPIVIew, UserDetailView, VerifyEmail,PasswordTokenCheckAPI,RequestPasswordResetEmail, googlepage
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import (
@@ -38,6 +39,10 @@ urlpatterns = [
     # path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'), 
     path('log/', Mesg.as_view()),
     path('email-verify/', VerifyEmail.as_view(), name = 'email-verify'),
+    path('request-reset-email/', RequestPasswordResetEmail.as_view(), name='request-reset-email'),
+    path('password-reset/<uidb64>/<token>/', PasswordTokenCheckAPI.as_view(), name='password-reset-confirm'),
+    path('password-reset-complete/', SetNewPasswordAPIVIew.as_view(), name='password-reset-complete'),
+    path('change-password/', ChangePassword.as_view(), name='change-password'),
     path("all/", views.all1,name="all"),
     path("socialLogin/", views.googlepage),
     path("", include('social_django.urls', namespace='social')),
