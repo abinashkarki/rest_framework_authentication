@@ -6,7 +6,7 @@ from django.contrib.auth import tokens
 from authapp import serializers
 from .utils import Util
 from django.http import response
-from authapp.serializers import LoginSerializer, RegisterSerialzer, UserSerializer,LogoutSerializer,EmailVerificationSerializer,ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, ChangePasswordSerializer
+from authapp.serializers import LoginSerializer, RegisterSerialzer, UserSerializer,LogoutSerializer,EmailVerificationSerializer,ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, ChangePasswordSerializer, ChangePasswordSerializer2
 from django.shortcuts import redirect, render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -39,7 +39,6 @@ class RegisterUser(APIView):
         user = User.objects.get(email = user_data['email'])
         token = RefreshToken.for_user(user).access_token
         current_site = get_current_site(request).domain
-        print(current_site)
         relativeLink = reverse('email-verify')
         absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
         email_body = 'Hi '+ user.username + 'user the link below to verify your email \n' + absurl
@@ -79,16 +78,9 @@ class VerifyEmail(APIView):
     serializer_class = EmailVerificationSerializer
     def get(self, request):
         token = request.GET.get('token')
-        # payload = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
-        # user = User.objects.get(id=payload['user_id'])
-        # user.is_verified = True
-        # print(user)
-        # return Response({'email':'successfuly activated','status':'status.HTTP_200_OK'}, status=status.HTTP_200_OK)
         try:
             payload = jwt.decode(token, settings.SECRET_KEY, algorithms='HS256')
-            # print('decoded')
             user = User.objects.get(id=payload['user_id'])
-            # print(user)
             if user.is_verified:
                 return Response({'msg':'User already verified!'}, status=status.HTTP_400_BAD_REQUEST)
             else:
@@ -197,6 +189,7 @@ class SetNewPasswordAPIVIew(APIView):
 
 class ChangePassword(APIView):
     serializer_class=ChangePasswordSerializer
+    serializer_class2=ChangePasswordSerializer2
     model = User
     permission_classes = [IsAuthenticated]
 
@@ -206,18 +199,33 @@ class ChangePassword(APIView):
 
     def put(self,request, *args, **kwargs):
         self.object = self.get_object()
-        serializer = self.serializer_class(data=request.data)
-
-        if serializer.is_valid():
+        
+    
+        if self.object.auth_provider != "email": 
+            serializer = self.serializer_class2(data=request.data)
+            if serializer.is_valid():
+                self.object.set_password(serializer.data.get("new_password"))
+                self.object.auth_provider == "email"
+                self.object.save()
+                response={
+                        'status':'success',
+                        'code':status.HTTP_200_OK,
+                        'message':"Password changed Successfully",
+                    }        
+                return Response(response)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)                  
+        else:
             #check old password
-            if not self.object.check_password(serializer.data.get("old_password")):
-                return Response({'error':["Wrong_password"]}, status=status.HTTP_400_BAD_REQUEST)
-            self.object.set_password(serializer.data.get("new_password"))
-            self.object.save()
-            response={
-                'status':'success',
-                'code':status.HTTP_200_OK,
-                'message':"Password changed Successfully",
-            }        
-            return Response(response)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST) 
+            serializer = self.serializer_class(data=request.data)
+            if serializer.is_valid():
+                if not self.object.check_password(serializer.data.get("old_password")):
+                    return Response({'error':["Wrong_password"]}, status=status.HTTP_400_BAD_REQUEST)
+                self.object.set_password(serializer.data.get("new_password"))
+                self.object.save()
+                response={
+                    'status':'success',
+                    'code':status.HTTP_200_OK,
+                    'message':"Password changed Successfully",
+                }        
+                return Response(response)                
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

@@ -27,7 +27,9 @@ class GoogleSocialAuthSerializer(serializers.Serializer):
 
         user_id = user_data['sub']
         email = user_data['email']
+        # print(email)
         name = user_data['name']
+        # print(name)
         provider = 'google'
 
         return register_social_user(

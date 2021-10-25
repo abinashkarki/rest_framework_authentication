@@ -146,7 +146,10 @@ class SetNewPasswordSerializer(serializers.Serializer):
 
 class ChangePasswordSerializer(serializers.Serializer):
     model = User
+    email= serializers.EmailField(min_length=5)
     old_password=serializers.CharField(min_length=6)
     new_password = serializers.CharField(min_length=6)
 
-    
+class ChangePasswordSerializer2(serializers.Serializer):
+    model = User
+    email = serializers.EmailField(min_length = 6)
