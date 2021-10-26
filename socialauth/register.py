@@ -16,17 +16,13 @@ def generate_username(name):
 
 
 def register_social_user(provider, user_id, email, name):
-    print("email"+email)
-    filtered_user_by_email = User.objects.get(email=email)
-    print('filtered_user_by_email'+ str(filtered_user_by_email))
-
+    # print("email"+email)
+    filtered_user_by_email = User.objects.filter(email=email)
+    # print('filtered_user_by_email'+ str(filtered_user_by_email))
     if filtered_user_by_email.exists():
-        
         if provider == filtered_user_by_email[0].auth_provider:
-
             registered_user = authenticate(
                 email=email, password=os.environ.get('SOCIAL_SECRET'))
-
             return {
                 'username': registered_user.username,
                 'email': registered_user.email,

@@ -152,4 +152,4 @@ class ChangePasswordSerializer(serializers.Serializer):
 
 class ChangePasswordSerializer2(serializers.Serializer):
     model = User
-    email = serializers.EmailField(min_length = 6)
+    new_password = serializers.CharField(min_length = 6)

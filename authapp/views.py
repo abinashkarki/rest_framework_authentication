@@ -203,9 +203,11 @@ class ChangePassword(APIView):
     
         if self.object.auth_provider != "email": 
             serializer = self.serializer_class2(data=request.data)
+            print(serializer.initial_data)
             if serializer.is_valid():
                 self.object.set_password(serializer.data.get("new_password"))
-                self.object.auth_provider == "email"
+                self.object.auth_provider = "email"
+                print("self.object.auth_provider"+self.object.auth_provider)
                 self.object.save()
                 response={
                         'status':'success',
