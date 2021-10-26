@@ -78,16 +78,16 @@ class LoginSerializer(serializers.ModelSerializer):
         password = attrs.get('password')
 
         filtered_user_by_email = User.objects.filter(email=email)
-
         user = auth.authenticate(email=email, password=password)
 
-        if filtered_user_by_email[0].auth_provider != 'email':
+        if filtered_user_by_email.exists() and filtered_user_by_email[0].auth_provider != 'email':
             raise AuthenticationFailed(
                 detail="Please continue your login using "+filtered_user_by_email[0].auth_provider
             )
+        
         print (user)
         if not user:
-            raise AuthenticationFailed({'msg': 'No such user','status':'status.HTTP_401_UNAUTHORIZED'}, code=status.HTTP_401_UNAUTHORIZED)
+            raise AuthenticationFailed({'msg': 'Your email or password does not match, Please try again!','status':'status.HTTP_401_UNAUTHORIZED'}, code=status.HTTP_401_UNAUTHORIZED)
         if user is None:
             raise AuthenticationFailed({'message': ' Your Email or Password is wrong', 'status':'status.HTTP_401_UNAUTHORIZED'}, code=status.HTTP_401_UNAUTHORIZED)
             # raise AuthenticationFailed({'message': ' username is wrong'})
@@ -101,7 +101,6 @@ class LoginSerializer(serializers.ModelSerializer):
             'username':user.username,
             'tokens':user.tokens()
         }
-        return super.validate(attrs)
 
 
 class LogoutSerializer(serializers.Serializer):

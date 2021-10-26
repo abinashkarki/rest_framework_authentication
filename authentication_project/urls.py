@@ -15,7 +15,7 @@ Including another URLconf
 """
 from os import name
 from django.contrib.auth import logout
-from authapp.views import ChangePassword, LoginAPIView, LogoutAPIView, RegisterUser, Mesg, ResendVerifyEmail, SetNewPasswordAPIVIew, UserDetailView, VerifyEmail,PasswordTokenCheckAPI,RequestPasswordResetEmail, googlepage
+from authapp.views import ChangePassword, LoginAPIView, LogoutAPIView, RegisterUser, Mesg, ResendVerifyEmail, SetNewPasswordAPIVIew, UserDetailView, VerifyEmail,PasswordTokenCheckAPI,RequestPasswordResetEmail, googlepage, facebookpage
 from django.contrib import admin
 from django.urls import path, include
 from rest_framework_simplejwt.views import (
@@ -45,7 +45,8 @@ urlpatterns = [
     path('change-password/', ChangePassword.as_view(), name='change-password'),
     path("all/", views.all1,name="all"),
     path("socialLogin/", views.googlepage),
+    path("facebookLogin/", views.facebookpage),
     path("", include('social_django.urls', namespace='social')),
     # path("socialLogout", views.logout, name="social-logout")
-    path('social_auth/', include('socialauth.urls')),
+    path('social-auth/', include('socialauth.urls')),
 ]
