@@ -144,6 +144,9 @@ def googlepage(request):
 def facebookpage(request):
     return render(request, 'login with facebook.html')
 
+def twitterpage(request):
+    return render(request, 'login with twitter.html')
+
 class RequestPasswordResetEmail(APIView):
     serializer_class = ResetPasswordEmailRequestSerializer
     

@@ -9,7 +9,7 @@ class UserManager(BaseUserManager):
         if username is None:
             raise TypeError("User should be provide username")
         if email is None:
-            raise TypeError("User should be provide email")
+            raise TypeError("User should provide email")
         # if password is None:
         #     raise TypeError("User should be provide password")
 

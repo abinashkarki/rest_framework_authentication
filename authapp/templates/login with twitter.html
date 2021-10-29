@@ -1,0 +1,54 @@
+<html>
+  <header>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"></script>
+    <script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+    <script src="https://cdn.rawgit.com/oauth-io/oauth-js/c5af4519/dist/oauth.js"></script>
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-social/4.12.0/bootstrap-social.min.css"> -->
+  </header>
+
+  <body>
+    <a id="twitter-button" class="btn btn-block btn-social btn-twitter">
+      <i class="fa fa-twitter"></i> Sign in with Twitter
+    </a>
+
+    <script>
+      $('#twitter-button').on('click', function() {
+        // Initialize with your OAuth.io app public key
+        OAuth.initialize('KM1UiKYvUBIkZjGQ4pcvYaWDyMvRW34f7FbqAroC8hbQ457ssp');
+        // Use popup for OAuth
+        OAuth.popup('twitter').then(twitter => {
+          console.log(twitter);
+          // Retrieves user data from oauth provider
+          console.log(twitter.me());
+        });
+      })
+    </script>
+  </body>
+</html>
+
+<!-- const OAuth = require('oauth')
+const got = require('got')
+const { promisify } = require('util')
+
+getTwitterUserProfileWithOAuth2('twitterdev')
+  .then((profile) => console.log('oauth2 response', JSON.stringify(profile, null, 2)) && process.exit(0))
+  .catch(err => console.error(err) && process.exit(1))
+
+
+async function getTwitterUserProfileWithOAuth2 (username = 'twitterdev') {
+  var oauth2 = new OAuth.OAuth2(
+    process.env.TWITTER_CONSUMER_KEY,
+    process.env.TWITTER_CONSUMER_SECRET,
+    'https://api.twitter.com/', null, 'oauth2/token', null
+  )
+  const getOAuthAccessToken = promisify(oauth2.getOAuthAccessToken.bind(oauth2))
+  const accessToken = await getOAuthAccessToken('', { grant_type: 'client_credentials' })
+
+  return got(`https://api.twitter.com/1.1/users/show.json?screen_name=${username}`, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`
+    }
+  })
+    .then((res) => JSON.parse(res.body))
+} -->
