@@ -2,11 +2,12 @@
 from os import stat
 from django.contrib.auth import logout
 from django.contrib.auth import tokens
+from django.db.models.fields import DateField
 
 from authapp import serializers
 from .utils import Util
 from django.http import response
-from authapp.serializers import LoginSerializer, RegisterSerialzer, UserSerializer,LogoutSerializer,EmailVerificationSerializer,ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, ChangePasswordSerializer, ChangePasswordSerializer2
+from authapp.serializers import LoginSerializer, RegisterSerialzer, UserSerializer,LogoutSerializer,EmailVerificationSerializer,ResetPasswordEmailRequestSerializer, SetNewPasswordSerializer, ChangePasswordSerializer, ChangePasswordSerializer2, TotalUserSerializer,RegisteredUserFilterSerializer
 from django.shortcuts import redirect, render
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -106,6 +107,7 @@ class UserDetailView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
+        print(user.active)
         return Response({
             'id':user.id,
             'username':user.username,
@@ -131,6 +133,10 @@ class LogoutAPIView(APIView):
         serializer.is_valid(raise_exception = True)
         try:
             serializer.save()
+            user = request.user
+            user.active = False
+            user.save()
+            print(user.active)
             return Response({'msg':'User Successfully logged out','status':'status.HTTP_204_NO_CONTENT'})
         except TokenError:
             return Response({'msg':'token is already blacklisted or is not valid','status':'status.HTTP_400_BAD_REQUEST'})
@@ -237,3 +243,31 @@ class ChangePassword(APIView):
                 }        
                 return Response(response)                
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+class TotalUser(APIView):
+    serializer = TotalUserSerializer
+    def get(self, *args, **kwargs):
+        all_user=User.objects.all()
+        last_user = len(all_user)
+        return Response(
+            {'totalUser':last_user}
+        )
+        
+class TotalActiveUser(APIView):
+    serializer = TotalUserSerializer
+    def get(self, *args, **kwargs):
+        active_user = User.objects.filter(active=True)
+        users = []
+        for i in active_user:
+            users.append(i.username)
+        totalActiveUser=len(active_user)
+        return Response({"total active user":totalActiveUser, 'users': users})
+
+import datetime
+class RegisteredUserFilter(APIView):
+    pass
+    # serializers = RegisteredUserFilterSerializer
+
+    # def get(self, from_date):
+    #     userondate = User.objects.filter(created_at=datetime.date(2008, 03, 27))
+    #     return Response({"User made on {from_date}": userondate.username})

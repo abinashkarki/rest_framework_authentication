@@ -1,8 +1,9 @@
+from django.contrib.auth import authenticate
 from django.shortcuts import render
 from rest_framework.generics import GenericAPIView
 from rest_framework import status
 from rest_framework.response import Response
-from .serializers import GoogleSocialAuthSerializer, FacebookSocialAuthSerializer, TwitterAuthSerializer, LinkedinAuthSerializer
+from .serializers import GoogleSocialAuthSerializer, FacebookSocialAuthSerializer, TwitterAuthSerializer
 # Create your views here.
 class GoogleSocialAuthView(GenericAPIView):
     serializer_class = GoogleSocialAuthSerializer
@@ -33,11 +34,3 @@ class TwitterSocialAuthView(GenericAPIView):
         return Response(serializer.validated_data, status=status.HTTP_200_OK)
 
 
-class LinkedinSocialAuthView(GenericAPIView):
-    serializer_class = LinkedinAuthSerializer
-
-    def post(self, request):
-        serializer = self.serializer_class(data = request.data)
-        serializer.is_valid(raise_exception=True)
-        data = ((serializer.validated_data)['oauth2_access_token'])
-        return Response(data, status=status.HTTP_200_OK)

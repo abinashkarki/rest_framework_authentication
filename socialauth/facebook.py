@@ -11,6 +11,7 @@ class Facebook:
         """
         validate method Queries the facebook GraphAPI to fetch the user info
         """
+        
         try:
             graph = facebook.GraphAPI(access_token=auth_token)
             profile = graph.request('me?fields=name,email')

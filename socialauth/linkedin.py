@@ -1,12 +1,14 @@
+from os import access
 from linkedin import linkedin
 from linkedin import server
 
 class Linkedin:
     @staticmethod
     def validate(oauth2_access_token):
-        application = linkedin.LinkedInApplication(token=oauth2_access_token)
-        # profile = application.get_profile()
-        profile = application.get_profile(selectors=['id', 'first-name'])
+        application = linkedin.LinkedInApplication(token=[oauth2_access_token])
+        profile = application.get_profile()
+        # profile = application.get_profile(selectors=['id', 'first-name'])
+        # print(profile)
         return profile
         # try:  
         #     application = linkedin.LinkedInApplication(token=oauth2_access_token)

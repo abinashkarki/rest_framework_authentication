@@ -79,13 +79,16 @@ class LoginSerializer(serializers.ModelSerializer):
 
         filtered_user_by_email = User.objects.filter(email=email)
         user = auth.authenticate(email=email, password=password)
+        filtered_user_by_email.update(active = True)
+        # filtered_user_by_email.active = True
+        # for users in filtered_user_by_email:
+        #     users.save()
+        # print(filtered_user_by_email.active)
 
         if filtered_user_by_email.exists() and filtered_user_by_email[0].auth_provider != 'email':
             raise AuthenticationFailed(
                 detail="Please continue your login using "+filtered_user_by_email[0].auth_provider
             )
-        
-        print (user)
         if not user:
             raise AuthenticationFailed({'msg': 'Your email or password does not match, Please try again!','status':'status.HTTP_401_UNAUTHORIZED'}, code=status.HTTP_401_UNAUTHORIZED)
         if user is None:
@@ -152,3 +155,13 @@ class ChangePasswordSerializer(serializers.Serializer):
 class ChangePasswordSerializer2(serializers.Serializer):
     model = User
     new_password = serializers.CharField(min_length = 6)
+
+class TotalUserSerializer(serializers.Serializer):
+    model = User
+    totalUser = serializers.IntegerField()
+
+class RegisteredUserFilterSerializer(serializers.Serializer):
+    model = User
+    # from_date = serializers.DateField(required=True, input_formats=["%d/%m/%Y"])
+    from_date = serializers.DateField()
+    # to_date = serializers.DateField()
