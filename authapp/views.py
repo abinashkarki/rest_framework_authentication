@@ -61,7 +61,6 @@ class ResendVerifyEmail(APIView):
                 return Response({'msg':'User is already verified'})
             token = RefreshToken.for_user(user).access_token
             current_site= get_current_site(self.request).domain
-            print(get_current_site(self.request))
             relativeLink = reverse('email-verify')
             
             absurl = 'http://'+current_site+relativeLink+"?token="+str(token)
@@ -107,7 +106,6 @@ class UserDetailView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
         user = request.user
-        print(user.active)
         return Response({
             'id':user.id,
             'username':user.username,
@@ -136,22 +134,26 @@ class LogoutAPIView(APIView):
             user = request.user
             user.active = False
             user.save()
-            print(user.active)
             return Response({'msg':'User Successfully logged out','status':'status.HTTP_204_NO_CONTENT'})
         except TokenError:
             return Response({'msg':'token is already blacklisted or is not valid','status':'status.HTTP_400_BAD_REQUEST'})
 
+
 def all1(request):
     return render (request, "welcome.html")
+
 
 def googlepage(request):
     return render(request, 'login with google.html')
 
+
 def facebookpage(request):
     return render(request, 'login with facebook.html')
 
+
 def twitterpage(request):
     return render(request, 'login with twitter.html')
+
 
 class RequestPasswordResetEmail(APIView):
     serializer_class = ResetPasswordEmailRequestSerializer
@@ -176,6 +178,7 @@ class RequestPasswordResetEmail(APIView):
             print("sent email")
         return Response({'Success':'We have sent you a link to reset your password'},status=status.HTTP_200_OK)
 
+
 class PasswordTokenCheckAPI(APIView):
     def get(self, request, uidb64, token):
         try:
@@ -199,6 +202,7 @@ class SetNewPasswordAPIVIew(APIView):
         serializer.is_valid(raise_exception=True)
         return Response({"success":True, "message":"Password Reset Success"}, status=status.HTTP_200_OK)
 
+
 class ChangePassword(APIView):
     serializer_class=ChangePasswordSerializer
     serializer_class2=ChangePasswordSerializer2
@@ -211,7 +215,6 @@ class ChangePassword(APIView):
 
     def put(self,request, *args, **kwargs):
         self.object = self.get_object()
-        
     
         if self.object.auth_provider != "email": 
             serializer = self.serializer_class2(data=request.data)
@@ -244,6 +247,7 @@ class ChangePassword(APIView):
                 return Response(response)                
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class TotalUser(APIView):
     serializer = TotalUserSerializer
     def get(self, *args, **kwargs):
@@ -252,6 +256,7 @@ class TotalUser(APIView):
         return Response(
             {'totalUser':last_user}
         )
+
         
 class TotalActiveUser(APIView):
     serializer = TotalUserSerializer
@@ -263,11 +268,26 @@ class TotalActiveUser(APIView):
         totalActiveUser=len(active_user)
         return Response({"total active user":totalActiveUser, 'users': users})
 
+
 import datetime
 class RegisteredUserFilter(APIView):
-    pass
-    # serializers = RegisteredUserFilterSerializer
+    serializer = RegisteredUserFilterSerializer
 
-    # def get(self, from_date):
-    #     userondate = User.objects.filter(created_at=datetime.date(2008, 03, 27))
-    #     return Response({"User made on {from_date}": userondate.username})
+    def get(self, from_date, to_date):
+        userondate = User.objects.filter(created_at__range=[from_date, to_date])
+       
+        return Response({"User": userondate})
+
+#  userondate = User.objects.filter(created_at__gte=datetime.date(fromDate),      
+                                #  created_at__lte=datetime.date(toDate))[0]
+
+        # user = User.objects.filter(username="karkiabinash")[0]
+        # print(user.created_at)
+
+    # def get(self, *args, **kwargs):
+    #     userondate = User.objects.filter(created_at__range=['2011-10-11', '2022-12-31']).__dict__
+    #     print(userondate)
+    #     users = []
+    #     for i in userondate:
+    #         users.append(i)      
+    #     return Response({"User": users})
