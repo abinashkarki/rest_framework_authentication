@@ -51,6 +51,7 @@ INSTALLED_APPS = [
     "allauth.socialaccount.providers.google",
     'django.contrib.sites',
     'social_django',
+    'django_filters',
 ]
 
 ACCOUNT_AUTHENTICATION_METHOD = 'email'

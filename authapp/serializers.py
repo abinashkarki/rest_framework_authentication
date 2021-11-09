@@ -161,6 +161,6 @@ class TotalUserSerializer(serializers.Serializer):
     totalUser = serializers.IntegerField()
 
 class RegisteredUserFilterSerializer(serializers.Serializer):
-    from_date = serializers.DateField()
-    to_date = serializers.DateField()
-    model = User
+    class Meta:
+        model = User
+        fields=['username', 'created_at']

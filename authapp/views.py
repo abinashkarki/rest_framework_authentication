@@ -269,25 +269,16 @@ class TotalActiveUser(APIView):
         return Response({"total active user":totalActiveUser, 'users': users})
 
 
-import datetime
 class RegisteredUserFilter(APIView):
     serializer = RegisteredUserFilterSerializer
+    
+    def get(self, *args, **kwargs):
+        from_date = self.request.GET['from_date']
+        to_date = self.request.GET['to_date']
+        userondate = User.objects.filter(created_at__range=[from_date, to_date]).values()
+        users = []
+        for user in userondate:
+            users.append(user['username'])
+        return Response({"User": users})
 
-    def get(self, from_date, to_date):
-        userondate = User.objects.filter(created_at__range=[from_date, to_date])
-       
-        return Response({"User": userondate})
 
-#  userondate = User.objects.filter(created_at__gte=datetime.date(fromDate),      
-                                #  created_at__lte=datetime.date(toDate))[0]
-
-        # user = User.objects.filter(username="karkiabinash")[0]
-        # print(user.created_at)
-
-    # def get(self, *args, **kwargs):
-    #     userondate = User.objects.filter(created_at__range=['2011-10-11', '2022-12-31']).__dict__
-    #     print(userondate)
-    #     users = []
-    #     for i in userondate:
-    #         users.append(i)      
-    #     return Response({"User": users})
