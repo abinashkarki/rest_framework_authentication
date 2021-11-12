@@ -53,4 +53,7 @@ urlpatterns = [
     path('totalUser/', TotalUser.as_view()),
     path('totalActiveUser/', TotalActiveUser.as_view()),
     path('userRegisteredOnDate/', RegisteredUserFilter.as_view()),
+    path('app/', include('appcreator.urls')),
 ]
+
+urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
